@@ -1,0 +1,7 @@
+name=Three Dee
+author=John Hobbs
+description=3D Rendering Demo
+bundleID=org.velvetcache.playdate.three-dee
+version=1.0.0
+imagePath=support/card.png
+buildNumber=1
