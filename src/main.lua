@@ -3,35 +3,9 @@ import "CoreLibs/graphics"
 import "CoreLibs/timer"
 
 import "matrix"
+import "shapes"
 
 local offset = { x = 200, y = 120 };
-
-local tris = {
-  {
-    v1 = { x = 50, y = 50, z = 50 },
-    v2 = { x = -50, y = -50, z = 50 },
-    v3 = { x = -50, y = 50, z = -50 },
-    color = { 0xaa, 0x55, 0xaa, 0x55, 0xaa, 0x55, 0xaa, 0x55 }
-  },
-  {
-    v1 = { x = 50, y = 50, z = 50 },
-    v2 = { x = -50, y = -50, z = 50 },
-    v3 = { x = 50, y = -50, z = -50 },
-    color = { 0x00, 0x55, 0x00, 0x55, 0x00, 0x55, 0x00, 0x55 }
-  },
-  {
-    v1 = { x = -50, y = 50, z = -50 },
-    v2 = { x = 50, y = -50, z = -50 },
-    v3 = { x = 50, y = 50, z = 50 },
-    color = { 0xaa, 0x00, 0xaa, 0x00, 0xaa, 0x00, 0xaa, 0x00 }
-  },
-  {
-    v1 = { x = -50, y = 50, z = -50 },
-    v2 = { x = 50, y = -50, z = -50 },
-    v3 = { x = 50, y = 50, z = 50 },
-    color = { 0xff, 0x00, 0xff, 0x00, 0xff, 0x00, 0xff, 0x00 }
-  },
-}
 
 local gfx = playdate.graphics;
 local pitch = 15; -- pitch in degrees
@@ -62,26 +36,26 @@ end
 local function drawFrame()
   gfx.clear()
 
-  local headingTransform = {
+  local headingTransform = Matrix.new({
     math.cos(heading), 0, -1 * math.sin(heading),
     0, 1, 0,
     math.sin(heading), 0, math.cos(heading),
-  }
+  })
 
   local rPitch = math.rad(pitch)
 
-  local pitchTransform = {
+  local pitchTransform = Matrix.new({
     1, 0, 0,
     0, math.cos(rPitch), math.sin(rPitch),
     0, -1 * math.sin(rPitch), math.cos(rPitch),
-  }
+  })
 
-  local matrix = MatrixMultiply(headingTransform, pitchTransform)
+  local matrix = headingTransform:Multiply(pitchTransform)
 
-  for _, t in ipairs(tris) do
-    local v1 = MatrixTransform(matrix, t.v1)
-    local v2 = MatrixTransform(matrix, t.v2)
-    local v3 = MatrixTransform(matrix, t.v3)
+  for _, t in ipairs(Tris) do
+    local v1 = matrix:Transform(t.v1)
+    local v2 = matrix:Transform(t.v2)
+    local v3 = matrix:Transform(t.v3)
     drawTranslatedTriangle(v1, v2, v3, t.color)
   end
 end
